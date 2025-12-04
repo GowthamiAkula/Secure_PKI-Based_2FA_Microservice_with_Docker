@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
 # Cron script to log 2FA codes every minute
 
+import sys
 from pathlib import Path
 import time
+
+# Ensure /app is on sys.path so totp_utils can be imported
+APP_DIR = Path("/app")
+if str(APP_DIR) not in sys.path:
+    sys.path.insert(0, str(APP_DIR))
 
 from totp_utils import generate_totp_code
 
 SEED_PATH = Path("/data/seed.txt")
 LOG_PATH = Path("/cron/last_code.txt")
+
 
 def main():
     # 1. Read hex seed (handle missing file gracefully)
@@ -29,5 +36,7 @@ def main():
     with LOG_PATH.open("a", encoding="utf-8") as f:
         f.write(f"{timestamp} - 2FA Code: {code}\n")
 
+
 if __name__ == "__main__":
     main()
+
