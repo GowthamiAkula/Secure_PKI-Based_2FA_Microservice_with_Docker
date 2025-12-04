@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    container_name: pki-2fa-container
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=UTC
+    volumes:
+      # named volumes for seed and cron output
+      - seed-data:/data
+      - cron-output:/cron
+      # mount key files into container (read-only)
+      - ./student_private.pem:/app/student_private.pem:ro
+      - ./student_public.pem:/app/student_public.pem:ro
+      - ./instructor_public.pem:/app/instructor_public.pem:ro
+    restart: unless-stopped
+
+volumes:
+  seed-data:
+  cron-output:
